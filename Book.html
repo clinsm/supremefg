@@ -1,5 +1,8 @@
 <!DOCTYPE html>
-<html style="font-size: 16px;" lang="en-ZA"><head>
+<html style="font-size: 16px;" lang="en-ZA"><head><link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+<link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+<link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
+<link rel="manifest" href="/site.webmanifest">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta charset="utf-8">
     <meta name="keywords" content="accounting services South Africa
@@ -100,7 +103,7 @@ Contact Supreme Financial Group today for a free consultation and see how we can
         <div class="u-container-align-center u-container-style u-group u-radius u-shape-round u-white u-group-1" data-animation-name="customAnimationIn" data-animation-duration="1000" data-animation-delay="0">
           <div class="u-container-layout u-container-layout-1">
             <div class="custom-expanded u-align-center u-form u-form-1">
-              <form action="https://forms.nicepagesrv.com/v2/form/process" class="u-clearfix u-form-spacing-20 u-form-vertical u-inner-form" style="padding: 0px;" source="email" name="form-2">
+              <form id="booking-form" class="u-clearfix u-form-spacing-20 u-form-vertical u-inner-form" style="padding: 0px;" source="email" name="form-2">
                 <div class="u-form-group u-form-name">
                   <label for="name-da97" class="u-form-control-hidden u-label">Name</label>
                   <input type="text" placeholder="Enter your Name" id="name-da97" name="name" class="u-border-no-bottom u-border-no-left u-border-no-right u-border-no-top u-grey-5 u-input u-input-rectangle" required="">
@@ -113,7 +116,7 @@ Contact Supreme Financial Group today for a free consultation and see how we can
                   <label class="u-label">Service</label>
                   <div class="u-form-checkbox-group-wrapper">
                     <div class="u-input-row">
-                      <input id="field-7923" type="checkbox" name="checkbox[]" value="accounting" class="u-field-input" checked="checked" data-calc="accounting">
+                      <input id="field-7923" type="checkbox" name="checkbox[]" value="accounting" class="u-field-input" data-calc="accounting" checked>
                       <label class="u-field-label" for="field-7923">Accounting</label>
                     </div>
                     <div class="u-input-row">
@@ -132,16 +135,16 @@ Contact Supreme Financial Group today for a free consultation and see how we can
                 </div>
                 <div class="u-form-group u-form-message">
                   <label for="message-da97" class="u-form-control-hidden u-label">Message</label>
-                  <textarea placeholder="Additional Infomation" rows="4" cols="50" id="message-da97" name="message" class="u-border-no-bottom u-border-no-left u-border-no-right u-border-no-top u-grey-5 u-input u-input-rectangle" required=""></textarea>
+                  <textarea placeholder="Additional Information" rows="4" cols="50" id="message-da97" name="message" class="u-border-no-bottom u-border-no-left u-border-no-right u-border-no-top u-grey-5 u-input u-input-rectangle" required=""></textarea>
                 </div>
                 <div class="u-form-group u-form-submit">
                   <a href="#" class="u-border-2 u-border-active-palette-3-light-2 u-border-hover-palette-3-light-2 u-border-palette-3-base u-btn u-btn-submit u-button-style u-text-hover-palette-3-light-2 u-btn-1">submit a booking&nbsp;</a>
                   <input type="submit" value="submit" class="u-form-control-hidden">
                 </div>
-                <div class="u-form-send-message u-form-send-success"> Thank you! Your message has been sent. </div>
-                <div class="u-form-send-error u-form-send-message"> Unable to send your message. Please fix errors then try again. </div>
+
                 <input type="hidden" value="" name="recaptchaResponse">
                 <input type="hidden" name="formServices" value="">
+                <div id="form-message" style="text-align: center;"></div> <!-- Added for feedback -->
               </form>
             </div>
           </div>
@@ -222,5 +225,38 @@ Contact Supreme Financial Group today for a free consultation and see how we can
           </div>
         </div>
       </div></footer>
+      <script src="https://code.jquery.com/jquery-3.7.1.js" integrity="sha256-eKhayi8LEQwp4NKxN+CfCh+3qOVUtJn3QNZ0TciWLP4=" crossorigin="anonymous"></script>
+      <script type="text/javascript">
+        $(document).ready(function() {
+          $("#booking-form").submit(function(e) {
+            e.preventDefault(); // Prevent default form submission
 
+            var name = $("#name-da97").val();
+            var email = $("#email-da97").val();
+            var selectedServices = [];
+            $("input[type='checkbox'][name='checkbox[]']:checked").each(function() {
+              selectedServices.push($(this).val());
+            });
+            var message = $("#message-da97").val();
+            // Display "Processing..." message
+            $("#form-message").text("Processing...");
+            $.ajax({
+              url: "servicebook.php",
+              type: "POST",
+              data: {
+                name: name,
+                email: email,
+                services: selectedServices.join(', '),
+                message: message
+              },
+              success: function(response) {
+                $("#form-message").text("Successfully Sent!"); // Display success message
+              },
+              error: function(jqXHR, textStatus, errorThrown) {
+                $("#form-message").text("Failed to send booking. Reason: "); // Display error message
+              }
+            });
+          });
+        });
+      </script>
 </body></html>
